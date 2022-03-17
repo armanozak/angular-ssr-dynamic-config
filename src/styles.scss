@@ -1,0 +1,28 @@
+@use '@angular/material' as mat;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@include mat.core();
+
+$app-primary: mat.define-palette(mat.$deep-purple-palette, 600);
+$app-accent: mat.define-palette(mat.$light-blue-palette, 300, 100, 500, 900);
+$app-warn: mat.define-palette(mat.$deep-orange-palette, 300, 100, 500, 900);
+
+$app-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $app-primary,
+      accent: $app-accent,
+      warn: $app-warn,
+    ),
+  )
+);
+
+@include mat.all-component-themes($app-theme);
+
+body {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: map-get(mat.$grey-palette, 100);
+}

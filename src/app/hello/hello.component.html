@@ -1,0 +1,18 @@
+<div
+  class="h-screen flex flex-col justify-center items-center"
+  *transloco="let t; read: translocoScope"
+>
+  <form>
+    <mat-form-field appearance="fill">
+      <mat-label>{{ t('_label.receiver') }}</mat-label>
+      <input
+        matInput
+        placeholder="Eg. Angular"
+        name="receiver"
+        [(ngModel)]="receiver"
+      />
+    </mat-form-field>
+  </form>
+
+  <h1 class="text-purple-700">{{ t('greeting', { receiver }) }}</h1>
+</div>

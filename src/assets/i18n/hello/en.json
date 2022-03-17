@@ -1,0 +1,6 @@
+{
+  "_label": {
+    "receiver": "Greeting receiver"
+  },
+  "greeting": "Hello {{ receiver }}"
+}
