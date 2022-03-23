@@ -60,9 +60,7 @@ export function app(): express.Express {
 }
 
 async function run(): Promise<void> {
-  config = await fetch(
-    'https://jsonplaceholder.typicode.com/users/1' // this should be a trusted source, of course
-  )
+  config = await fetch(process.env['CONFIG_URL']!)
     .then((response) => response.json())
     .catch((_err) => {
       // you can handle error here, this is just a PoC
