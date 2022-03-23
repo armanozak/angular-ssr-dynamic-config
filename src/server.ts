@@ -3,7 +3,6 @@ import 'zone.js/dist/zone-node';
 import * as express from 'express';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { writeFile } from 'fs/promises';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
@@ -65,14 +64,6 @@ async function run(): Promise<void> {
     .catch((_err) => {
       // you can handle error here, this is just a PoC
     });
-
-  const configPath = join(distFolder, './assets/config.json');
-
-  await writeFile(configPath, JSON.stringify(config), {
-    flag: 'w',
-  }).catch((_err) => {
-    // you can handle error here, this is just a PoC
-  });
 
   const port = process.env['PORT'] || 8000;
 

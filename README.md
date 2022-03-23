@@ -18,7 +18,7 @@
 1. Run `npm run dev:ssr`.
 2. Visit [http://localhost:4000](http://localhost:4000).
 
-"Romaguera-Crona" is retrieved from [this remote endpoint](https://jsonplaceholder.typicode.com/users/1) at Node process start and is available for CSR as a static asset afterwards.
+"Romaguera-Crona" is retrieved from [this remote endpoint](https://jsonplaceholder.typicode.com/users/1) at Node process start. The config state is transferred, so when CSR takes over, there will not be another request.
 
 ## SSR Production Mode (with a development server)
 
@@ -26,6 +26,6 @@
 2. When finished, run `npm run serve:ssr`.
 3. Visit [http://localhost:8000](http://localhost:8000).
 
-"Romaguera-Crona" is retrieved from [this remote endpoint](https://jsonplaceholder.typicode.com/users/1) at Node process start and is available for CSR as a static asset afterwards.
+"Romaguera-Crona" is retrieved from [this remote endpoint](https://jsonplaceholder.typicode.com/users/1) at Node process start. The config state is transferred, so when CSR takes over, there will not be another request.
 
 > **Important Note:** Prerendering is work in progress.
