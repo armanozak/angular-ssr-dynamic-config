@@ -10,16 +10,8 @@ if (environment.production) {
 }
 
 function bootstrap() {
-  fetch('./assets/config.json')
-    .then((response) => response.json())
-    .then((config) =>
-      platformBrowserDynamic([
-        {
-          provide: CONFIG,
-          useValue: config,
-        },
-      ]).bootstrapModule(AppModule)
-    )
+  platformBrowserDynamic()
+    .bootstrapModule(AppModule)
     .catch((err) => console.error(err));
 }
 

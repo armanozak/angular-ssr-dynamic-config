@@ -11,7 +11,7 @@ import { ngExpressEngine } from '@nguniversal/express-engine';
 import { AppServerModule } from './main.server';
 
 import nodeFetch from 'node-fetch';
-import { CONFIG } from './app/config';
+import { REMOTE_CONFIG } from './app/config';
 globalThis.fetch = nodeFetch;
 
 let config: any;
@@ -51,7 +51,7 @@ export function app(): express.Express {
       req,
       providers: [
         { provide: APP_BASE_HREF, useValue: req.baseUrl },
-        { provide: CONFIG, useValue: config },
+        { provide: REMOTE_CONFIG, useValue: config },
       ],
     });
   });
