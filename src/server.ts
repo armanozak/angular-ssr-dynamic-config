@@ -3,15 +3,14 @@ import 'zone.js/dist/zone-node';
 import * as express from 'express';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { request } from 'https';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
 
 import { AppServerModule } from './main.server';
 
-import nodeFetch from 'node-fetch';
 import { REMOTE_CONFIG } from './app/config';
-globalThis.fetch = nodeFetch;
 
 let config: any;
 const distFolder = join(process.cwd(), 'dist/example-app/browser');
@@ -59,11 +58,20 @@ export function app(): express.Express {
 }
 
 async function run(): Promise<void> {
-  config = await fetch(process.env['CONFIG_URL']!)
-    .then((response) => response.json())
-    .catch((_err) => {
-      // you can handle error here, this is just a PoC
-    });
+  config = await fetchJson(process.env['CONFIG_URL']).catch(
+    (err: ConfigUrlError | HttpsRequestError) => {
+      const message =
+        err instanceof HttpsRequestError
+          ? `HTTP ${err.code}: ${err.message}`
+          : err.message;
+
+      console.error(`Failed to fetch remote config.\n${message}`);
+
+      process.exit(1);
+
+      // error can be handled more gracefully, this is just a PoC
+    }
+  );
 
   const port = process.env['PORT'] || 8000;
 
@@ -72,6 +80,55 @@ async function run(): Promise<void> {
   server.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
+}
+
+function fetchJson<T = any>(url?: string): Promise<T> {
+  if (!url) {
+    return Promise.reject(new ConfigUrlError());
+  }
+
+  return new Promise((resolve, reject) => {
+    const req = request(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    req.on('response', (response) => {
+      const { statusCode, statusMessage } = response;
+      if (statusCode !== 200) {
+        reject(new HttpsRequestError(statusMessage, statusCode));
+      }
+
+      const data: any = [];
+      response.on('data', (chunk) => {
+        data.push(chunk);
+      });
+
+      response.on('end', () => {
+        resolve(JSON.parse(Buffer.concat(data).toString()));
+      });
+    });
+
+    req.on('error', (err) => {
+      reject(err);
+    });
+
+    req.end();
+  });
+}
+
+class ConfigUrlError extends Error {
+  constructor() {
+    super('Config URL not provided. Please check your environment variables.');
+  }
+}
+
+class HttpsRequestError extends Error {
+  constructor(message = 'Request failed.', public code?: number) {
+    super(message);
+  }
 }
 
 // Webpack will replace 'require' with '__webpack_require__'
@@ -85,7 +142,3 @@ if (moduleFilename === __filename || moduleFilename.includes('iisnode')) {
 }
 
 export * from './main.server';
-
-declare module globalThis {
-  export let fetch: typeof nodeFetch;
-}
